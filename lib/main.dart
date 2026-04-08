@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'services/notification_service.dart';
 import 'firebase_options.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
-import 'features/auth/presentation/home_screen.dart';
 import 'features/auth/presentation/admin_home_screen.dart';
+import 'features/auth/presentation/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialize notifications
+  await NotificationService.instance.initialize();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -32,7 +38,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Decides where to send the user on app launch
 class _RootRedirect extends ConsumerWidget {
   const _RootRedirect();
 
@@ -40,19 +45,13 @@ class _RootRedirect extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
 
-    // Still loading
     if (authState.isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+          body: Center(child: CircularProgressIndicator()));
     }
 
-    // Not logged in
-    if (authState.user == null) {
-      return const LoginScreen();
-    }
+    if (authState.user == null) return const LoginScreen();
 
-    // Logged in → route by role
     return authState.user!.role == 'admin'
         ? const AdminHomeScreen()
         : const HomeScreen();
