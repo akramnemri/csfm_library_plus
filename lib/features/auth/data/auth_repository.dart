@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../domain/user_model.dart';
+import '../../../services/notification_service.dart';
 
 class AuthRepository {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
@@ -51,24 +52,22 @@ class AuthRepository {
   }
 
   // Login
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
-    await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+Future<UserModel> login({
+  required String email,
+  required String password,
+}) async {
+  await _auth.signInWithEmailAndPassword(
+    email: email,
+    password: password,
+  );
 
-    final userData = await getCurrentUserData();
-    if (userData == null) {
-      throw Exception(
-        'Authenticated user data was not found in Firestore.',
-      );
-    }
+  final user = await getCurrentUserData() as UserModel;
 
-    return userData;
-  }
+  // Save FCM token for push notifications
+  await NotificationService.instance.saveTokenToFirestore(user.uid);
+
+  return user;
+}
 
   // Logout
   Future<void> logout() async {
