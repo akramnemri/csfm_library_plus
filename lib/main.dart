@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
-import 'features/auth/presentation/catalogue_screen.dart';
+import 'features/auth/presentation/auth_provider.dart';
+import 'features/auth/presentation/login_screen.dart';
+import 'features/auth/presentation/home_screen.dart';
+import 'features/auth/presentation/admin_home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +27,34 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-home: const CatalogueScreen(),
+      home: const _RootRedirect(),
     );
+  }
+}
+
+// Decides where to send the user on app launch
+class _RootRedirect extends ConsumerWidget {
+  const _RootRedirect();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
+    // Still loading
+    if (authState.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Not logged in
+    if (authState.user == null) {
+      return const LoginScreen();
+    }
+
+    // Logged in → route by role
+    return authState.user!.role == 'admin'
+        ? const AdminHomeScreen()
+        : const HomeScreen();
   }
 }
