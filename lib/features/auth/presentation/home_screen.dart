@@ -5,6 +5,7 @@ import 'emprunts_provider.dart';
 import 'catalogue_screen.dart';
 import 'mes_emprunts_screen.dart';
 import 'presentation/profile_screen.dart';
+import '../../../services/notification_provider.dart';
 
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -130,6 +131,12 @@ class _DashboardPage extends ConsumerWidget {
                   const Center(child: CircularProgressIndicator()),
               error: (e, _) => Text('Erreur: $e'),
               data: (emprunts) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ref
+                      .read(notificationCheckerProvider)
+                      .checkEmpruntsRetards(emprunts);
+                });
+
                 final actifs = emprunts
                     .where((e) =>
                         e.statut == 'actif' || e.statut == 'en_attente')

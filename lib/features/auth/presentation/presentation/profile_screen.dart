@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth_provider.dart';
 import '../login_screen.dart';
+import '../../../../services/notification_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -51,6 +52,21 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 32),
             const Divider(),
             const SizedBox(height: 16),
+
+            // Test notification
+            ElevatedButton.icon(
+              icon: const Icon(Icons.notifications_active, color: Colors.white),
+              label: const Text('Tester notification',
+                  style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
+              onPressed: () async {
+                await NotificationService.instance.showNotification(
+                  title: '🔔 Test notification',
+                  body: 'Les notifications CSFM Library+ fonctionnent !',
+                );
+              },
+            ),
+            const SizedBox(height: 12),
 
             // Logout
             SizedBox(
