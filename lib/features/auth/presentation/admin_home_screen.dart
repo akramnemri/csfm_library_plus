@@ -4,7 +4,8 @@ import 'auth_provider.dart';
 import 'emprunts_provider.dart';
 import 'emprunts_admin_screen.dart';
 import 'catalogue_screen.dart';
-import 'presentation/profile_screen.dart';
+import 'profile_screen.dart';
+import 'statistiques_screen.dart';
 
 class AdminHomeScreen extends ConsumerStatefulWidget {
   const AdminHomeScreen({super.key});
@@ -20,6 +21,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     _AdminDashboard(),
     CatalogueScreen(),
     EmpruntsAdminScreen(),
+    StatistiquesScreen(),
     ProfileScreen(),
   ];
 
@@ -46,6 +48,10 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
               icon: Icon(Icons.swap_horiz),
               activeIcon: Icon(Icons.swap_horiz),
               label: 'Emprunts'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_outlined),
+              activeIcon: Icon(Icons.bar_chart),
+              label: 'Stats'),
           BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               activeIcon: Icon(Icons.person),

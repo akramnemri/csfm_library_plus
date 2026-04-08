@@ -4,7 +4,7 @@ import 'auth_provider.dart';
 import 'emprunts_provider.dart';
 import 'catalogue_screen.dart';
 import 'mes_emprunts_screen.dart';
-import 'presentation/profile_screen.dart';
+import 'profile_screen.dart';
 import '../../../services/notification_provider.dart';
 
 

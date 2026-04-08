@@ -24,6 +24,47 @@ final userEmpruntsProvider = StreamProvider<List<EmpruntModel>>((ref) {
   return ref.watch(empruntsRepositoryProvider).getUserEmprunts(user.uid);
 });
 
+// ========== STATISTIQUES PROVIDERS ==========
+final summaryProvider = FutureProvider<Map<String, int>>((ref) async {
+  final emprunts = await ref.watch(allEmpruntsProvider.future);
+  return {
+    'total': emprunts.length,
+    'enAttente': emprunts.where((e) => e.statut == 'en_attente').length,
+    'actifs': emprunts.where((e) => e.statut == 'actif').length,
+    'enRetard': emprunts.where((e) => e.estEnRetard).length,
+    'retournes': emprunts.where((e) => e.statut == 'retourne').length,
+  };
+});
+
+final empruntsParDocumentProvider = FutureProvider<Map<String, int>>((ref) async {
+  final emprunts = await ref.watch(allEmpruntsProvider.future);
+  final Map<String, int> counts = {};
+  for (final e in emprunts) {
+    counts[e.documentTitre] = (counts[e.documentTitre] ?? 0) + 1;
+  }
+  return counts;
+});
+
+final documentsParCategorieProvider = FutureProvider<Map<String, int>>((ref) async {
+  final emprunts = await ref.watch(allEmpruntsProvider.future);
+  final Map<String, int> counts = {};
+  for (final e in emprunts) {
+    counts[e.documentTitre] = (counts[e.documentTitre] ?? 0) + 1;
+  }
+  return counts;
+});
+
+final retardsParMoisProvider = FutureProvider<Map<String, int>>((ref) async {
+  final emprunts = await ref.watch(allEmpruntsProvider.future);
+  final retards = emprunts.where((e) => e.estEnRetard);
+  final Map<String, int> counts = {};
+  for (final e in retards) {
+    final mois = '${e.dateEmprunt.year}-${e.dateEmprunt.month.toString().padLeft(2, '0')}';
+    counts[mois] = (counts[mois] ?? 0) + 1;
+  }
+  return counts;
+});
+
 // Emprunts actions
 class EmpruntsNotifier extends StateNotifier<AsyncValue<void>> {
   final EmpruntsRepository _repo;
