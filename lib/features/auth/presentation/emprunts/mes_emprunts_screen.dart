@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/emprunt_model.dart';
+import '../../domain/emprunt_model.dart';
 import 'emprunts_provider.dart';
 
 class MesEmpruntsScreen extends ConsumerWidget {

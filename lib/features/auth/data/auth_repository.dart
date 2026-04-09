@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../domain/user_model.dart';
-import '../../../services/notification_service.dart';
+import '../presentation/notifications/notification_service.dart';
 
 class AuthRepository {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;

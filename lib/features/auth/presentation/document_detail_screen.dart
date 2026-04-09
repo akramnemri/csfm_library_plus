@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../auth/presentation/auth_provider.dart';
+import 'auth_provider.dart';
 import '../domain/emprunt_model.dart';
-import 'emprunts_provider.dart';
+import 'emprunts/emprunts_provider.dart';
 import '../domain/document_model.dart';
 
 class DocumentDetailScreen extends ConsumerWidget {

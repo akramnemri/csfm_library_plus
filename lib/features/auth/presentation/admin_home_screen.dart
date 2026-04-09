@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_provider.dart';
-import 'emprunts_provider.dart';
-import 'emprunts_admin_screen.dart';
-import 'catalogue_screen.dart';
+import 'emprunts/emprunts_provider.dart';
+import 'emprunts/emprunts_admin_screen.dart';
+import 'catalogue/catalogue_screen.dart';
 import 'profile_screen.dart';
-import 'statistiques_screen.dart';
+import 'statistiques/statistiques_screen.dart';
 
 class AdminHomeScreen extends ConsumerStatefulWidget {
   const AdminHomeScreen({super.key});

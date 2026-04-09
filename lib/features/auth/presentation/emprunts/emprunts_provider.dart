@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/emprunts_repository.dart';
-import '../domain/emprunt_model.dart';
-import '../../auth/presentation/auth_provider.dart';
+import '../../data/emprunts_repository.dart';
+import '../../domain/emprunt_model.dart';
+import '../auth_provider.dart';
 
 final empruntsRepositoryProvider = Provider<EmpruntsRepository>((ref) {
   return EmpruntsRepository();

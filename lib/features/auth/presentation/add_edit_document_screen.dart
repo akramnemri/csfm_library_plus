@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/document_model.dart';
-import 'catalogue_provider.dart';
+import 'catalogue/catalogue_provider.dart';
 
 class AddEditDocumentScreen extends ConsumerStatefulWidget {
   final DocumentModel? document; // null = add, not null = edit

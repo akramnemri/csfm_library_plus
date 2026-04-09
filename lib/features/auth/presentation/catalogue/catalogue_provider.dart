@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/catalogue_repository.dart';
-import '../domain/document_model.dart';
+import '../../data/catalogue_repository.dart';
+import '../../domain/document_model.dart';
 
 // Repository provider
 final catalogueRepositoryProvider = Provider<CatalogueRepository>((ref) {

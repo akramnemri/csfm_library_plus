@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_provider.dart';
-import 'emprunts_provider.dart';
-import 'catalogue_screen.dart';
-import 'mes_emprunts_screen.dart';
+import 'emprunts/emprunts_provider.dart';
+import 'catalogue/catalogue_screen.dart';
+import 'emprunts/mes_emprunts_screen.dart';
 import 'profile_screen.dart';
-import '../../../services/notification_provider.dart';
+import 'notifications/notification_provider.dart';
 
 
 class HomeScreen extends ConsumerStatefulWidget {

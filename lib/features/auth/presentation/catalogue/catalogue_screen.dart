@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../auth/presentation/auth_provider.dart';
-import '../domain/document_model.dart';
+import '../../presentation/auth_provider.dart';
+import '../../domain/document_model.dart';
 import 'catalogue_provider.dart';
-import 'document_detail_screen.dart';
-import 'add_edit_document_screen.dart';
+import '../document_detail_screen.dart';
+import '../add_edit_document_screen.dart';
 
 class CatalogueScreen extends ConsumerWidget {
   const CatalogueScreen({super.key});

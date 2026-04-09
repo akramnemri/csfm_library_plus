@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'services/notification_service.dart';
+import 'features/auth/presentation/notifications/notification_service.dart';
 import 'firebase_options.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
