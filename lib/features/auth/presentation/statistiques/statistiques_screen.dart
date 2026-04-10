@@ -72,37 +72,44 @@ class _SummaryCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.5,
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmall = screenWidth < 360;
+    final crossCount = isSmall ? 3 : 5;
+    
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.center,
       children: [
         _SummaryCard(
-          label: 'Documents',
-          value: summary['totalDocuments'] ?? 0,
+          label: 'Total',
+          value: summary['total'] ?? 0,
           icon: Icons.library_books,
           color: Colors.indigo,
         ),
         _SummaryCard(
-          label: 'Utilisateurs',
-          value: summary['totalUsers'] ?? 0,
-          icon: Icons.people_outline,
-          color: Colors.teal,
+          label: 'En attente',
+          value: summary['enAttente'] ?? 0,
+          icon: Icons.hourglass_empty,
+          color: Colors.orange,
         ),
         _SummaryCard(
-          label: 'Emprunts actifs',
-          value: summary['empruntsActifs'] ?? 0,
+          label: 'Actifs',
+          value: summary['actifs'] ?? 0,
           icon: Icons.book_outlined,
           color: Colors.green,
         ),
         _SummaryCard(
           label: 'En retard',
-          value: summary['empruntsEnRetard'] ?? 0,
+          value: summary['enRetard'] ?? 0,
           icon: Icons.warning_outlined,
           color: Colors.red,
+        ),
+        _SummaryCard(
+          label: 'Retournés',
+          value: summary['retournes'] ?? 0,
+          icon: Icons.check_circle_outline,
+          color: Colors.teal,
         ),
       ],
     );
@@ -125,36 +132,37 @@ class _SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      width: 100,
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 2),
           Text(
             value.toString(),
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(
-                fontSize: 12, color: Colors.grey),
+            style: const TextStyle(fontSize: 10, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
