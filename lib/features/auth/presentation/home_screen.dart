@@ -168,18 +168,30 @@ class _DashboardPage extends ConsumerWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                _QuickAction(
-                  icon: Icons.search,
-                  label: 'Rechercher',
-                  color: Colors.indigo,
-                  onTap: () {},
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.search,
+                    label: 'Rechercher',
+                    color: Colors.indigo,
+                    onTap: () {
+                      // Navigate to catalogue (index 1)
+                      final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                      homeState?.setState(() => homeState._currentIndex = 1);
+                    },
+                  ),
                 ),
                 const SizedBox(width: 12),
-                _QuickAction(
-                  icon: Icons.bookmark_outline,
-                  label: 'Mes emprunts',
-                  color: Colors.teal,
-                  onTap: () {},
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.bookmark_outline,
+                    label: 'Mes emprunts',
+                    color: Colors.teal,
+                    onTap: () {
+                      // Navigate to mes emprunts (index 2)
+                      final homeState = context.findAncestorStateOfType<_HomeScreenState>();
+                      homeState?.setState(() => homeState._currentIndex = 2);
+                    },
+                  ),
                 ),
               ],
             ),

@@ -51,25 +51,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Logo / Title
-              const Icon(Icons.library_books, size: 72, color: Colors.indigo),
-              const SizedBox(height: 16),
+              const Icon(Icons.library_books, size: 56, color: Colors.indigo),
+              const SizedBox(height: 12),
               const Text(
                 'CSFM Library+',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.indigo,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
 
               // Email
               TextField(
@@ -112,16 +112,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 16),
 
               // Login button
-              ElevatedButton(
-                onPressed: state.isLoading ? null : _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+              SizedBox(
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: state.isLoading ? null : _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo,
+                  ),
+                  child: state.isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Se connecter',
+                          style: TextStyle(fontSize: 16, color: Colors.white)),
                 ),
-                child: state.isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Se connecter',
-                        style: TextStyle(fontSize: 16, color: Colors.white)),
               ),
               const SizedBox(height: 16),
 
