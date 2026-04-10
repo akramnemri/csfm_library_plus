@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/auth/presentation/notifications/notification_service.dart';
@@ -11,12 +12,14 @@ import 'features/auth/presentation/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // Initialize notifications
-  await NotificationService.instance.initialize();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await NotificationService.instance.initialize();
+  } catch (e) {
+    debugPrint('Firebase not available on this platform: $e');
+  }
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -50,7 +53,9 @@ class _RootRedirect extends ConsumerWidget {
           body: Center(child: CircularProgressIndicator()));
     }
 
-    if (authState.user == null) return const LoginScreen();
+    if (authState.user == null) {
+      return const LoginScreen();
+    }
 
     return authState.user!.role == 'admin'
         ? const AdminHomeScreen()
