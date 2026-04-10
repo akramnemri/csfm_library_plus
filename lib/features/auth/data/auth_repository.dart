@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../domain/user_model.dart';
-import '../presentation/notifications/notification_service.dart';
 
 class AuthRepository {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
@@ -63,9 +63,7 @@ Future<UserModel> login({
 
   final user = await getCurrentUserData() as UserModel;
 
-  // Save FCM token for push notifications
-  await NotificationService.instance.saveTokenToFirestore(user.uid);
-
+  debugPrint('User logged in: ${user.email}, role: ${user.role}');
   return user;
 }
 

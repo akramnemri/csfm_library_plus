@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'features/auth/presentation/notifications/notification_service.dart';
 import 'firebase_options.dart';
 import 'features/auth/presentation/auth_provider.dart';
 import 'features/auth/presentation/login_screen.dart';
@@ -16,9 +15,9 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await NotificationService.instance.initialize();
+    debugPrint('Firebase initialized successfully');
   } catch (e) {
-    debugPrint('Firebase not available on this platform: $e');
+    debugPrint('Firebase initialization error: $e');
   }
 
   runApp(const ProviderScope(child: MyApp()));
