@@ -2,11 +2,13 @@ name: "csfm_library_plus"
 environment:
   sdk: '^3.9.0'
 
+flutter:
+  uses-material-design: true
+
 dependencies:
  
   flutter:
     sdk: flutter
-    
 
   # Firebase
   firebase_core: ^4.6.0
@@ -27,6 +29,7 @@ dependencies:
   json_annotation: ^4.11.0
 
   # UI
+  cupertino_icons: ^1.0.8
   cached_network_image: ^3.4.1
   fl_chart: ^1.2.0
   image_picker: ^1.2.1
