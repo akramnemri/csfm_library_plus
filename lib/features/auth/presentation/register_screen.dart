@@ -12,11 +12,18 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _nomController = TextEditingController();
   final _prenomController = TextEditingController();
   String _selectedRole = 'apprenant_externe';
+  String? _confirmPasswordError;
 
   Future<void> _register() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() => _confirmPasswordError = 'Les mots de passe ne correspondent pas');
+      return;
+    }
+    setState(() => _confirmPasswordError = null);
     await ref.read(authProvider.notifier).register(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -71,6 +78,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               decoration: const InputDecoration(
                 labelText: 'Mot de passe',
                 border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _confirmPasswordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Confirmer le mot de passe',
+                border: const OutlineInputBorder(),
+                errorText: _confirmPasswordError,
               ),
             ),
             const SizedBox(height: 12),
