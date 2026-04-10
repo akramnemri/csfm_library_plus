@@ -60,7 +60,8 @@ class EmpruntModel {
 
   // Is this emprunt overdue?
   bool get estEnRetard =>
-      statut == 'actif' && DateTime.now().isAfter(dateRetourPrevue);
+      (statut == 'actif' || statut == 'en_retard') && 
+      DateTime.now().isAfter(dateRetourPrevue);
 
   // Days remaining (negative = overdue)
   int get joursRestants =>
