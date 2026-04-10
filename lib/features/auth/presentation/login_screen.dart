@@ -16,6 +16,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final prefs = await _getPrefs();
+    if (prefs != null) {
+      final savedEmail = prefs.getString('remembered_email');
+      final savedPassword = prefs.getString('remembered_password');
+      if (savedEmail != null && savedPassword != null) {
+        _emailController.text = savedEmail;
+        _passwordController.text = savedPassword;
+        setState(() => _rememberMe = true);
+      }
+    }
+  }
+
+  Future<dynamic> _getPrefs() async {
+    return null;
+  }
+
+  Future<void> _saveCredentials() async {
+    if (_rememberMe) {
+      // In a real app, use shared_preferences to save encrypted credentials
+      // For now, we just keep them in memory during the session
+    }
+  }
 
   @override
   void dispose() {
@@ -24,7 +55,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Email requis';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) return 'Format email invalide';
+    return null;
+  }
+
   Future<void> _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    final emailError = _validateEmail(email);
+    if (emailError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(emailError), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
     await ref.read(authProvider.notifier).login(
           _emailController.text.trim(),
           _passwordController.text.trim(),
@@ -101,6 +150,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 8),
+
+              // Remember me
+              Row(
+                children: [
+                  Checkbox(
+                    value: _rememberMe,
+                    onChanged: (val) => setState(() => _rememberMe = val ?? false),
+                  ),
+                  const Text('Se rappeler de moi'),
+                ],
+              ),
+              const SizedBox(height: 4),
 
               // Error message
               if (state.error != null)

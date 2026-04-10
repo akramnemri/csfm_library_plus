@@ -16,14 +16,65 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nomController = TextEditingController();
   final _prenomController = TextEditingController();
   String _selectedRole = 'apprenant_externe';
+  String? _emailError;
+  String? _passwordError;
   String? _confirmPasswordError;
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Email requis';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) return 'Format email invalide';
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Mot de passe requis';
+    if (value.length < 8) return '8 caractères minimum';
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Une majuscule requise';
+    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Une minuscule requise';
+    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Un chiffre requis';
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) return 'Un caractère spécial requis';
+    return null;
+  }
+
   Future<void> _register() async {
-    if (_passwordController.text != _confirmPasswordController.text) {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final prenom = _prenomController.text.trim();
+    final nom = _nomController.text.trim();
+
+    if (prenom.isEmpty || nom.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Prénom et nom requis'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final emailError = _validateEmail(email);
+    final passwordError = _validatePassword(password);
+
+    if (emailError != null) {
+      setState(() => _emailError = emailError);
+      return;
+    }
+    if (passwordError != null) {
+      setState(() => _passwordError = passwordError);
+      return;
+    }
+    if (password != _confirmPasswordController.text.trim()) {
       setState(() => _confirmPasswordError = 'Les mots de passe ne correspondent pas');
       return;
     }
-    setState(() => _confirmPasswordError = null);
+
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+      _confirmPasswordError = null;
+    });
+
     await ref.read(authProvider.notifier).register(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -50,6 +101,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           children: [
             TextField(
               controller: _prenomController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Prénom',
                 border: OutlineInputBorder(),
@@ -58,6 +110,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             const SizedBox(height: 12),
             TextField(
               controller: _nomController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
                 labelText: 'Nom',
                 border: OutlineInputBorder(),
@@ -66,18 +119,23 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             const SizedBox(height: 12),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
                 labelText: 'Email',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                errorText: _emailError,
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Mot de passe',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                errorText: _passwordError,
+                helperText: '8+ caractères: majuscule, minuscule, chiffre, caractère spécial',
+                helperMaxLines: 2,
               ),
             ),
             const SizedBox(height: 12),
