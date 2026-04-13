@@ -13,23 +13,26 @@ final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   return await repo.getCurrentUserData();
 });
 
-// Auth state (loading, error, success)
+// Auth state (loading, error, success, password reset sent)
 class AuthState {
   final bool isLoading;
   final String? error;
   final UserModel? user;
+  final bool passwordResetSent;
 
   const AuthState({
     this.isLoading = false,
     this.error,
     this.user,
+    this.passwordResetSent = false,
   });
 
-  AuthState copyWith({bool? isLoading, String? error, UserModel? user}) {
+  AuthState copyWith({bool? isLoading, String? error, UserModel? user, bool? passwordResetSent}) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       user: user ?? this.user,
+      passwordResetSent: passwordResetSent ?? this.passwordResetSent,
     );
   }
 }
@@ -74,6 +77,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> logout() async {
     await _repo.logout();
     state = const AuthState();
+  }
+
+  Future<void> resetPassword(String email) async {
+    state = state.copyWith(isLoading: true, error: null, passwordResetSent: false);
+    try {
+      await _repo.resetPassword(email);
+      state = state.copyWith(isLoading: false, passwordResetSent: true);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  void resetPasswordState() {
+    state = state.copyWith(passwordResetSent: false, error: null);
   }
 }
 
