@@ -47,11 +47,6 @@ class _EmpruntAdminCard extends ConsumerWidget {
     final isEnAttente = emprunt.statut == 'en_attente';
     final isEnRetard = emprunt.estEnRetard;
 
-    Color statusColor = Colors.orange;
-    if (emprunt.statut == 'actif') {
-      statusColor = isEnRetard ? Colors.red : Colors.green;
-    }
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -166,7 +161,7 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: (colors[statut] ?? Colors.grey).withOpacity(0.1),
+        color: (colors[statut] ?? Colors.grey).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors[statut] ?? Colors.grey),
       ),

@@ -10,7 +10,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 // Current user provider
 final currentUserProvider = FutureProvider<UserModel?>((ref) async {
   final repo = ref.watch(authRepositoryProvider);
-  return await repo.getCurrentUserData();
+  return repo.getCurrentUserData();
 });
 
 // Auth state (loading, error, success, password reset sent)

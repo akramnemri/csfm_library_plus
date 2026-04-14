@@ -102,7 +102,7 @@ class _AddEditDocumentScreenState
 
             // Category dropdown
             DropdownButtonFormField<String>(
-              value: _categorie,
+              initialValue: _categorie,
               decoration: const InputDecoration(
                   labelText: 'Catégorie', border: OutlineInputBorder()),
               items: const [
@@ -121,7 +121,7 @@ class _AddEditDocumentScreenState
             SwitchListTile(
               title: const Text('Disponible'),
               value: _disponible,
-              activeColor: Colors.indigo,
+              activeThumbColor: Colors.indigo,
               onChanged: (val) => setState(() => _disponible = val),
             ),
             const SizedBox(height: 24),

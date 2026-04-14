@@ -20,7 +20,6 @@ class CatalogueScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredDocs = ref.watch(filteredDocumentsProvider);
-    final searchQuery = ref.watch(searchQueryProvider);
     final selectedCategorie = ref.watch(selectedCategorieProvider);
     final authState = ref.watch(authProvider);
     final isAdmin = authState.user?.role == 'admin';
@@ -83,7 +82,7 @@ class CatalogueScreen extends ConsumerWidget {
                     ),
                     onSelected: (_) => ref
                         .read(selectedCategorieProvider.notifier)
-                        .state = cat['value'] as String?,
+                        .state = cat['value'],
                   ),
                 );
               },

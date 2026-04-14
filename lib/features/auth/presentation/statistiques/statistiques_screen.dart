@@ -41,19 +41,19 @@ class StatistiquesScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Most borrowed books
-              _SectionTitle('📚 Livres les plus empruntés'),
+              const _SectionTitle('📚 Livres les plus empruntés'),
               const SizedBox(height: 12),
               const _TopBooksChart(),
               const SizedBox(height: 24),
 
               // Documents by category
-              _SectionTitle('🗂 Documents par catégorie'),
+              const _SectionTitle('🗂 Documents par catégorie'),
               const SizedBox(height: 12),
               const _CategoryPieChart(),
               const SizedBox(height: 24),
 
               // Overdue by month
-              _SectionTitle('⚠️ Retards par mois'),
+              const _SectionTitle('⚠️ Retards par mois'),
               const SizedBox(height: 12),
               const _RetardsChart(),
               const SizedBox(height: 24),
@@ -72,10 +72,6 @@ class _SummaryCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmall = screenWidth < 360;
-    final crossCount = isSmall ? 3 : 5;
-    
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -221,7 +217,7 @@ class _TopBooksChart extends ConsumerWidget {
                           Container(
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.indigo.withOpacity(0.1),
+                              color: Colors.indigo.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
@@ -231,7 +227,7 @@ class _TopBooksChart extends ConsumerWidget {
                               height: 24,
                               decoration: BoxDecoration(
                                 color: Colors.indigo
-                                    .withOpacity(0.6 + (0.4 * ratio)),
+                                    .withValues(alpha: 0.6 + (0.4 * ratio)),
                                 borderRadius:
                                     BorderRadius.circular(6),
                               ),
@@ -472,13 +468,13 @@ class _ChartCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
       ),
       child: child,
     );

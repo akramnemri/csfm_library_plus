@@ -7,7 +7,11 @@ import '../domain/document_model.dart';
 
 class DocumentDetailScreen extends ConsumerWidget {
   final DocumentModel document;
-  const DocumentDetailScreen({super.key, required this.document});
+
+  const DocumentDetailScreen({
+    required this.document,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

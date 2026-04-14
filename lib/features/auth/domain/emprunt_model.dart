@@ -21,8 +21,8 @@ class EmpruntModel {
     required this.documentTitre,
     required this.dateEmprunt,
     required this.dateRetourPrevue,
-    this.dateRetourEffective,
     required this.statut,
+    this.dateRetourEffective,
   });
 
   factory EmpruntModel.fromMap(Map<String, dynamic> map, String id) {

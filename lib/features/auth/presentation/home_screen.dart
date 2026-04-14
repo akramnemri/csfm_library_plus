@@ -25,6 +25,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ProfileScreen(),
   ];
 
+  void _onTabSelected(int index) {
+    setState(() => _currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         selectedItemColor: Colors.indigo,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _currentIndex = index),
+        onTap: _onTabSelected,
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
@@ -173,11 +177,7 @@ class _DashboardPage extends ConsumerWidget {
                     icon: Icons.search,
                     label: 'Rechercher',
                     color: Colors.indigo,
-                    onTap: () {
-                      // Navigate to catalogue (index 1)
-                      final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                      homeState?.setState(() => homeState._currentIndex = 1);
-                    },
+                    onTap: () => context.findAncestorStateOfType<_HomeScreenState>()?._onTabSelected(1),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -186,11 +186,7 @@ class _DashboardPage extends ConsumerWidget {
                     icon: Icons.bookmark_outline,
                     label: 'Mes emprunts',
                     color: Colors.teal,
-                    onTap: () {
-                      // Navigate to mes emprunts (index 2)
-                      final homeState = context.findAncestorStateOfType<_HomeScreenState>();
-                      homeState?.setState(() => homeState._currentIndex = 2);
-                    },
+                    onTap: () => context.findAncestorStateOfType<_HomeScreenState>()?._onTabSelected(2),
                   ),
                 ),
               ],
@@ -217,9 +213,9 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
@@ -262,9 +258,9 @@ class _QuickAction extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
+            color: color.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.2)),
+            border: Border.all(color: color.withValues(alpha: 0.2)),
           ),
           child: Column(
             children: [

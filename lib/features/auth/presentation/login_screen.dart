@@ -42,13 +42,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return null;
   }
 
-  Future<void> _saveCredentials() async {
-    if (_rememberMe) {
-      // In a real app, use shared_preferences to save encrypted credentials
-      // For now, we just keep them in memory during the session
-    }
-  }
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -65,7 +58,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _login() async {
     final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
 
     final emailError = _validateEmail(email);
     if (emailError != null) {
@@ -203,7 +195,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   MaterialPageRoute(
                       builder: (_) => const ForgotPasswordScreen()),
                 ),
-                child: const Text("Mot de passe oublié ?"),
+                child: const Text('Mot de passe oublié ?'),
               ),
 
               // Register link
@@ -213,7 +205,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   MaterialPageRoute(
                       builder: (_) => const RegisterScreen()),
                 ),
-                child: const Text("Pas encore de compte ? S'inscrire"),
+                child: const Text('Pas encore de compte ? S\'inscrire'),
               ),
             ],
           ),
