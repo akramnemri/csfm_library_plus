@@ -1,0 +1,31 @@
+class AppStrings {
+  static const String appName = 'CSFM Library+';
+  static const String login = 'Se connecter';
+  static const String register = 'S\'inscrire';
+  static const String logout = 'Se déconnecter';
+  static const String email = 'Email';
+  static const String password = 'Mot de passe';
+  static const String confirmPassword = 'Confirmer le mot de passe';
+  static const String forgotPassword = 'Mot de passe oublié ?';
+  static const String noAccount = 'Pas encore de compte ?';
+  static const String hasAccount = 'Déjà un compte ?';
+  static const String catalogue = 'Catalogue';
+  static const String mesEmprunts = 'Mes emprunts';
+  static const String profile = 'Profil';
+  static const String statistiques = 'Statistiques';
+  static const String admin = 'Admin';
+  static const String valider = 'Valider';
+  static const String retourner = 'Retour rendu';
+  static const String supprimer = 'Supprimer';
+  static const String modifier = 'Modifier';
+  static const String ajouter = 'Ajouter';
+  static const String erreur = 'Erreur';
+  static const String chargement = 'Chargement...';
+  static const String aucunDocument = 'Aucun document trouvé';
+  static const String aucunEmprunt = 'Aucun emprunt';
+  static const String confirmEmprunt = 'Confirmer l\'emprunt';
+  static const String confirmDelete = 'Confirmer la suppression';
+  static const String success = 'Succès';
+  static const String annuler = 'Annuler';
+  static const String confermer = 'Confirmer';
+}
