@@ -27,5 +27,5 @@ class AppStrings {
   static const String confirmDelete = 'Confirmer la suppression';
   static const String success = 'Succès';
   static const String annuler = 'Annuler';
-  static const String confermer = 'Confirmer';
+  static const String confirmer = 'Confirmer';
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/emprunt_model.dart';
 import 'emprunts_provider.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class MesEmpruntsScreen extends ConsumerWidget {
   const MesEmpruntsScreen({super.key});
@@ -13,7 +15,7 @@ class MesEmpruntsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mes emprunts'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       body: empruntsAsync.when(
@@ -26,11 +28,17 @@ class MesEmpruntsScreen extends ConsumerWidget {
                   style: TextStyle(color: Colors.grey)),
             );
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: emprunts.length,
-            itemBuilder: (context, index) =>
-                _UserEmpruntCard(emprunt: emprunts[index]),
+          return RefreshIndicator(
+            onRefresh: () async {
+              // ignore: unused_result
+              ref.refresh(userEmpruntsProvider);
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: emprunts.length,
+              itemBuilder: (context, index) =>
+                  _UserEmpruntCard(emprunt: emprunts[index]),
+            ),
           );
         },
       ),
@@ -53,7 +61,7 @@ class _UserEmpruntCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(16),
         leading: Icon(
           Icons.book,
-          color: isEnRetard ? Colors.red : Colors.indigo,
+          color: isEnRetard ? AppTheme.errorColor : Theme.of(context).colorScheme.primary,
           size: 36,
         ),
         title: Text(emprunt.documentTitre,
@@ -62,11 +70,11 @@ class _UserEmpruntCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Emprunté le : ${_formatDate(emprunt.dateEmprunt)}'),
-            if (emprunt.statut != 'retourne')
+            if (emprunt.statut != AppStatuts.retourne)
               Text(
                 'Retour prévu : ${_formatDate(emprunt.dateRetourPrevue)}',
                 style: TextStyle(
-                    color: isEnRetard ? Colors.red : Colors.black),
+                    color: isEnRetard ? AppTheme.errorColor : Colors.black),
               ),
             if (emprunt.dateRetourEffective != null)
               Text(
@@ -75,7 +83,7 @@ class _UserEmpruntCard extends StatelessWidget {
               Text(
                 '⚠️ En retard de ${emprunt.joursRestants.abs()} jour(s)',
                 style: const TextStyle(
-                    color: Colors.red, fontWeight: FontWeight.bold),
+                    color: AppTheme.errorColor, fontWeight: FontWeight.bold),
               ),
           ],
         ),
@@ -99,21 +107,21 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = {
-      'en_attente': 'En attente',
-      'actif': enRetard ? 'En retard' : 'Actif',
-      'retourne': 'Retourné',
+      AppStatuts.enAttente: 'En attente',
+      AppStatuts.actif: enRetard ? 'En retard' : 'Actif',
+      AppStatuts.retourne: 'Retourné',
     }[statut] ?? statut;
 
     final color = {
-      'en_attente': Colors.orange,
-      'actif': enRetard ? Colors.red : Colors.green,
-      'retourne': Colors.grey,
+      AppStatuts.enAttente: AppTheme.warningColor,
+      AppStatuts.actif: enRetard ? AppTheme.errorColor : AppTheme.successColor,
+      AppStatuts.retourne: Colors.grey,
     }[statut] ?? Colors.grey;
 
     return Chip(
       label: Text(label,
           style: TextStyle(color: color, fontSize: 11)),
-      backgroundColor: color.withValues(alpha: 0.1),
+       backgroundColor: color.withOpacity(0.1),
       side: BorderSide(color: color),
     );
   }

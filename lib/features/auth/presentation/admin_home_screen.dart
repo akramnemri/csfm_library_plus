@@ -5,6 +5,9 @@ import 'emprunts/emprunts_admin_screen.dart';
 import 'catalogue/catalogue_screen.dart';
 import 'profile_screen.dart';
 import 'statistiques/statistiques_screen.dart';
+import '../../../core/constants/app_constants.dart';
+import '../../../core/services/connectivity_service.dart';
+import '../../../core/theme/app_theme.dart';
 
 class AdminHomeScreen extends ConsumerStatefulWidget {
   const AdminHomeScreen({super.key});
@@ -15,6 +18,7 @@ class AdminHomeScreen extends ConsumerStatefulWidget {
 
 class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
   int _currentIndex = 0;
+  bool _isOnline = true;
 
   final List<Widget> _pages = const [
     _AdminDashboard(),
@@ -25,36 +29,70 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connected = await ConnectivityService().isConnected;
+    if (mounted) {
+      setState(() => _isOnline = connected);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard_outlined),
-              activeIcon: Icon(Icons.dashboard),
-              label: 'Dashboard'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.library_books_outlined),
-              activeIcon: Icon(Icons.library_books),
-              label: 'Catalogue'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.swap_horiz),
-              activeIcon: Icon(Icons.swap_horiz),
-              label: 'Emprunts'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.bar_chart_outlined),
-              activeIcon: Icon(Icons.bar_chart),
-              label: 'Stats'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profil'),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!_isOnline)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: AppTheme.warningColor,
+              child: const Row(
+                children: [
+                  Icon(Icons.wifi_off, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    'Pas de connexion Internet',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          BottomNavigationBar(
+            currentIndex: _currentIndex,
+            selectedItemColor: Colors.indigo,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) => setState(() => _currentIndex = index),
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.dashboard_outlined),
+                  activeIcon: Icon(Icons.dashboard),
+                  label: 'Dashboard'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.library_books_outlined),
+                  activeIcon: Icon(Icons.library_books),
+                  label: 'Catalogue'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.swap_horiz),
+                  activeIcon: Icon(Icons.swap_horiz),
+                  label: 'Emprunts'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart_outlined),
+                  activeIcon: Icon(Icons.bar_chart),
+                  label: 'Stats'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Profil'),
+            ],
+          ),
         ],
       ),
     );
@@ -68,8 +106,8 @@ class _AdminDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allEmpruntsAsync = ref.watch(allEmpruntsProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
+     return Scaffold(
+       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
@@ -80,14 +118,14 @@ class _AdminDashboard extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Erreur: $e')),
         data: (emprunts) {
           final enAttente = emprunts
-              .where((e) => e.statut == 'en_attente')
+              .where((e) => e.statut == AppStatuts.enAttente)
               .length;
           final actifs =
-              emprunts.where((e) => e.statut == 'actif').length;
+              emprunts.where((e) => e.statut == AppStatuts.actif).length;
           final enRetard =
               emprunts.where((e) => e.estEnRetard).length;
           final retournes =
-              emprunts.where((e) => e.statut == 'retourne').length;
+              emprunts.where((e) => e.statut == AppStatuts.retourne).length;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -153,8 +191,8 @@ class _AdminDashboard extends ConsumerWidget {
                   const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.orange[50],
+                   decoration: BoxDecoration(
+                     color: Colors.orange.shade50,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.orange),
                     ),
@@ -195,9 +233,9 @@ class _AdminStatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

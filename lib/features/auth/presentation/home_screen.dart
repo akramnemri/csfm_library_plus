@@ -6,7 +6,8 @@ import 'catalogue/catalogue_screen.dart';
 import 'emprunts/mes_emprunts_screen.dart';
 import 'profile_screen.dart';
 import 'notifications/notification_provider.dart';
-
+import '../../../core/services/connectivity_service.dart';
+import '../../../core/theme/app_theme.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +18,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
+  bool _isOnline = true;
 
   final List<Widget> _pages = const [
     _DashboardPage(),
@@ -30,32 +32,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+  }
+
+  Future<void> _checkConnectivity() async {
+    final connected = await ConnectivityService().isConnected;
+    if (mounted) {
+      setState(() => _isOnline = connected);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: Colors.indigo,
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: _onTabSelected,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'Accueil'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.library_books_outlined),
-              activeIcon: Icon(Icons.library_books),
-              label: 'Catalogue'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark_outline),
-              activeIcon: Icon(Icons.bookmark),
-              label: 'Mes emprunts'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profil'),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!_isOnline)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: AppTheme.warningColor,
+              child: const Row(
+                children: [
+                  Icon(Icons.wifi_off, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    'Pas de connexion Internet',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          BottomNavigationBar(
+            currentIndex: _currentIndex,
+            selectedItemColor: Theme.of(context).colorScheme.primary,
+            unselectedItemColor: Colors.grey,
+            type: BottomNavigationBarType.fixed,
+            onTap: _onTabSelected,
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  activeIcon: Icon(Icons.home),
+                  label: 'Accueil'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.library_books_outlined),
+                  activeIcon: Icon(Icons.library_books),
+                  label: 'Catalogue'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bookmark_outline),
+                  activeIcon: Icon(Icons.bookmark),
+                  label: 'Mes emprunts'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Profil'),
+            ],
+          ),
         ],
       ),
     );
@@ -72,9 +108,9 @@ class _DashboardPage extends ConsumerWidget {
     final empruntsAsync = ref.watch(userEmpruntsProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         title: const Text('CSFM Library+'),
         actions: [
@@ -94,8 +130,11 @@ class _DashboardPage extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.indigo, Color(0xFF7986CB)],
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Theme.of(context).colorScheme.secondary,
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -106,7 +145,7 @@ class _DashboardPage extends ConsumerWidget {
                 children: [
                   Text(
                     'Bonjour, ${user?.prenom ?? ''} 👋',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.bold),
@@ -116,7 +155,7 @@ class _DashboardPage extends ConsumerWidget {
                     user?.role == 'apprenant_loge'
                         ? '⭐ Apprenant logé — accès prioritaire'
                         : 'Apprenant externe',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white70, fontSize: 13),
                   ),
                 ],
@@ -152,13 +191,13 @@ class _DashboardPage extends ConsumerWidget {
                 return Row(
                   children: [
                     _StatCard('Actifs', actifs.toString(),
-                        Icons.book_outlined, Colors.indigo),
+                        Icons.book_outlined, Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 12),
                     _StatCard('En retard', enRetard.toString(),
-                        Icons.warning_outlined, Colors.red),
+                        Icons.warning_outlined, Theme.of(context).colorScheme.error),
                     const SizedBox(width: 12),
                     _StatCard('Total', total.toString(),
-                        Icons.history, Colors.teal),
+                        Icons.history, Theme.of(context).colorScheme.tertiary),
                   ],
                 );
               },
@@ -176,17 +215,21 @@ class _DashboardPage extends ConsumerWidget {
                   child: _QuickAction(
                     icon: Icons.search,
                     label: 'Rechercher',
-                    color: Colors.indigo,
-                    onTap: () => context.findAncestorStateOfType<_HomeScreenState>()?._onTabSelected(1),
+                    color: Theme.of(context).colorScheme.primary,
+                    onTap: () => context
+                        .findAncestorStateOfType<_HomeScreenState>()
+                        ?._onTabSelected(1),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _QuickAction(
-                    icon: Icons.bookmark_outline,
+                    icon: Icons.bookmark_outlined,
                     label: 'Mes emprunts',
-                    color: Colors.teal,
-                    onTap: () => context.findAncestorStateOfType<_HomeScreenState>()?._onTabSelected(2),
+                    color: Theme.of(context).colorScheme.tertiary,
+                    onTap: () => context
+                        .findAncestorStateOfType<_HomeScreenState>()
+                        ?._onTabSelected(2),
                   ),
                 ),
               ],
@@ -213,9 +256,9 @@ class _StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
+          color: color.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withValues(alpha: 0.2)),
+          border: Border.all(color: color.withOpacity(0.2)),
         ),
         child: Column(
           children: [
@@ -258,9 +301,9 @@ class _QuickAction extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
+            color: color.withOpacity(0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.2)),
+            border: Border.all(color: color.withOpacity(0.2)),
           ),
           child: Column(
             children: [

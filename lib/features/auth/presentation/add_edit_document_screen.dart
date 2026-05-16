@@ -12,13 +12,13 @@ class AddEditDocumentScreen extends ConsumerStatefulWidget {
       _AddEditDocumentScreenState();
 }
 
-class _AddEditDocumentScreenState
-    extends ConsumerState<AddEditDocumentScreen> {
+class _AddEditDocumentScreenState extends ConsumerState<AddEditDocumentScreen> {
   final _titreController = TextEditingController();
   final _auteurController = TextEditingController();
   final _anneeController = TextEditingController();
   final _coverUrlController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   String _categorie = 'livre';
   bool _disponible = true;
 
@@ -50,6 +50,8 @@ class _AddEditDocumentScreenState
   }
 
   Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final doc = DocumentModel(
       id: widget.document?.id ?? '',
       titre: _titreController.text.trim(),
@@ -70,6 +72,24 @@ class _AddEditDocumentScreenState
     if (mounted) Navigator.pop(context);
   }
 
+  String? _validateTitre(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Le titre est requis';
+    return null;
+  }
+
+  String? _validateAuteur(String? value) {
+    if (value == null || value.trim().isEmpty) return 'L\'auteur est requis';
+    return null;
+  }
+
+  String? _validateAnnee(String? value) {
+    if (value == null || value.trim().isEmpty) return 'L\'année est requise';
+    final n = int.tryParse(value.trim());
+    if (n == null || n <= 0) return 'Année invalide';
+    if (n > DateTime.now().year) return 'Année ne peut pas dépasser ${DateTime.now().year}';
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(catalogueNotifierProvider);
@@ -82,71 +102,96 @@ class _AddEditDocumentScreenState
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildField(_titreController, 'Titre', Icons.title),
-            const SizedBox(height: 12),
-            _buildField(_auteurController, 'Auteur', Icons.person_outline),
-            const SizedBox(height: 12),
-            _buildField(_anneeController, 'Année', Icons.calendar_today,
-                isNumber: true),
-            const SizedBox(height: 12),
-            _buildField(_coverUrlController, 'URL de couverture', Icons.image,
-                hint: 'https://...'),
-            const SizedBox(height: 12),
-            _buildField(
-                _descriptionController, 'Description', Icons.description,
-                maxLines: 3),
-            const SizedBox(height: 12),
-
-            // Category dropdown
-            DropdownButtonFormField<String>(
-              initialValue: _categorie,
-              decoration: const InputDecoration(
-                  labelText: 'Catégorie', border: OutlineInputBorder()),
-              items: const [
-                DropdownMenuItem(value: 'livre', child: Text('Livre')),
-                DropdownMenuItem(value: 'magazine', child: Text('Magazine')),
-                DropdownMenuItem(value: 'dvd', child: Text('DVD')),
-                DropdownMenuItem(
-                    value: 'support_pedagogique',
-                    child: Text('Support pédagogique')),
-              ],
-              onChanged: (val) => setState(() => _categorie = val!),
-            ),
-            const SizedBox(height: 12),
-
-            // Availability switch
-            SwitchListTile(
-              title: const Text('Disponible'),
-              value: _disponible,
-              activeThumbColor: Colors.indigo,
-              onChanged: (val) => setState(() => _disponible = val),
-            ),
-            const SizedBox(height: 24),
-
-            if (state is AsyncError)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(state.error.toString(),
-                    style: const TextStyle(color: Colors.red),
-                    textAlign: TextAlign.center),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildField(
+                _titreController,
+                'Titre',
+                Icons.title,
+                validator: _validateTitre,
               ),
-
-            ElevatedButton(
-              onPressed: state is AsyncLoading ? null : _save,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+              const SizedBox(height: 12),
+              _buildField(
+                _auteurController,
+                'Auteur',
+                Icons.person_outline,
+                validator: _validateAuteur,
               ),
-              child: state is AsyncLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(isEditing ? 'Enregistrer' : 'Ajouter',
-                      style:
-                          const TextStyle(fontSize: 16, color: Colors.white)),
-            ),
-          ],
+              const SizedBox(height: 12),
+              _buildField(
+                _anneeController,
+                'Année',
+                Icons.calendar_today,
+                isNumber: true,
+                validator: _validateAnnee,
+              ),
+              const SizedBox(height: 12),
+              _buildField(
+                _coverUrlController,
+                'URL de couverture',
+                Icons.image,
+                hint: 'https://...',
+              ),
+              const SizedBox(height: 12),
+              _buildField(
+                _descriptionController,
+                'Description',
+                Icons.description,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 12),
+
+              // Category dropdown
+              DropdownButtonFormField<String>(
+                initialValue: _categorie,
+                decoration: const InputDecoration(
+                    labelText: 'Catégorie', border: OutlineInputBorder()),
+                items: const [
+                  DropdownMenuItem(value: 'livre', child: Text('Livre')),
+                  DropdownMenuItem(value: 'magazine', child: Text('Magazine')),
+                  DropdownMenuItem(value: 'dvd', child: Text('DVD')),
+                  DropdownMenuItem(
+                      value: 'support_pedagogique',
+                      child: Text('Support pédagogique')),
+                ],
+                onChanged: (val) => setState(() => _categorie = val!),
+              ),
+              const SizedBox(height: 12),
+
+              // Availability switch
+              SwitchListTile(
+                title: const Text('Disponible'),
+                value: _disponible,
+                activeThumbColor: Colors.indigo,
+                onChanged: (val) => setState(() => _disponible = val),
+              ),
+              const SizedBox(height: 24),
+
+              if (state is AsyncError)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(state.error.toString(),
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center),
+                ),
+
+              ElevatedButton(
+                onPressed: state is AsyncLoading ? null : _save,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.indigo,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: state is AsyncLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(isEditing ? 'Enregistrer' : 'Ajouter',
+                        style:
+                            const TextStyle(fontSize: 16, color: Colors.white)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,8 +204,9 @@ class _AddEditDocumentScreenState
     bool isNumber = false,
     int maxLines = 1,
     String? hint,
+    String? Function(String?)? validator,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
@@ -170,6 +216,7 @@ class _AddEditDocumentScreenState
         prefixIcon: Icon(icon),
         border: const OutlineInputBorder(),
       ),
+      validator: validator,
     );
   }
 }

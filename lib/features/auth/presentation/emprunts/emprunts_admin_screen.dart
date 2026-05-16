@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/emprunt_model.dart';
+import '../../../../core/constants/app_constants.dart';
 import 'emprunts_provider.dart';
 
 class EmpruntsAdminScreen extends ConsumerWidget {
@@ -26,11 +27,17 @@ class EmpruntsAdminScreen extends ConsumerWidget {
                   style: TextStyle(color: Colors.grey)),
             );
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: emprunts.length,
-            itemBuilder: (context, index) =>
-                _EmpruntAdminCard(emprunt: emprunts[index]),
+          return RefreshIndicator(
+            onRefresh: () async {
+              // ignore: unused_result
+              ref.refresh(activeEmpruntsProvider);
+            },
+            child: ListView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: emprunts.length,
+              itemBuilder: (context, index) =>
+                  _EmpruntAdminCard(emprunt: emprunts[index]),
+            ),
           );
         },
       ),
@@ -44,7 +51,7 @@ class _EmpruntAdminCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isEnAttente = emprunt.statut == 'en_attente';
+    final isEnAttente = emprunt.statut == AppStatuts.enAttente;
     final isEnRetard = emprunt.estEnRetard;
 
     return Card(
@@ -81,6 +88,8 @@ class _EmpruntAdminCard extends ConsumerWidget {
                       ? Colors.indigo
                       : Colors.grey),
             ),
+            const SizedBox(height: 4),
+            _CategoryBadge(emprunt.documentCategorie),
             const SizedBox(height: 8),
 
             Text('Emprunté le : ${_formatDate(emprunt.dateEmprunt)}'),
@@ -114,7 +123,7 @@ class _EmpruntAdminCard extends ConsumerWidget {
                     child: const Text('Valider',
                         style: TextStyle(color: Colors.white)),
                   ),
-                if (emprunt.statut == 'actif') ...[
+                if (emprunt.statut == AppStatuts.actif) ...[
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo),
@@ -148,20 +157,20 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labels = {
-      'en_attente': 'En attente',
-      'actif': enRetard ? 'En retard' : 'Actif',
-      'retourne': 'Retourné',
+      AppStatuts.enAttente: 'En attente',
+      AppStatuts.actif: enRetard ? 'En retard' : 'Actif',
+      AppStatuts.retourne: 'Retourné',
     };
     final colors = {
-      'en_attente': Colors.orange,
-      'actif': enRetard ? Colors.red : Colors.green,
-      'retourne': Colors.grey,
+      AppStatuts.enAttente: Colors.orange,
+      AppStatuts.actif: enRetard ? Colors.red : Colors.green,
+      AppStatuts.retourne: Colors.grey,
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: (colors[statut] ?? Colors.grey).withValues(alpha: 0.1),
+       decoration: BoxDecoration(
+         color: (colors[statut] ?? Colors.grey).withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: colors[statut] ?? Colors.grey),
       ),
@@ -172,6 +181,39 @@ class _StatusBadge extends StatelessWidget {
             fontWeight: FontWeight.bold,
             fontSize: 12),
       ),
+    );
+  }
+}
+
+class _CategoryBadge extends StatelessWidget {
+  final String categorie;
+  const _CategoryBadge(this.categorie);
+
+  @override
+  Widget build(BuildContext context) {
+    final labels = {
+      AppCategories.livre: 'Livre',
+      AppCategories.magazine: 'Magazine',
+      AppCategories.dvd: 'DVD',
+      AppCategories.supportPedagogique: 'Support',
+    };
+    final colors = {
+      AppCategories.livre: Colors.indigo,
+      AppCategories.magazine: Colors.teal,
+      AppCategories.dvd: Colors.orange,
+      AppCategories.supportPedagogique: Colors.purple,
+    };
+    final label = labels[categorie] ?? categorie;
+    final color = colors[categorie] ?? Colors.grey;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+       decoration: BoxDecoration(
+         color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(label,
+          style: TextStyle(fontSize: 11, color: color)),
     );
   }
 }

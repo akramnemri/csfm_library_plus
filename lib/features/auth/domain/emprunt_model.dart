@@ -1,62 +1,66 @@
 class EmpruntModel {
-  final String id;
-  final String userId;
-  final String userNom;
-  final String userPrenom;
-  final String userRole;
-  final String documentId;
-  final String documentTitre;
-  final DateTime dateEmprunt;
-  final DateTime dateRetourPrevue;
-  final DateTime? dateRetourEffective;
-  final String statut; // 'en_attente' | 'actif' | 'retourne' | 'en_retard'
+   final String id;
+   final String userId;
+   final String userNom;
+   final String userPrenom;
+   final String userRole;
+   final String documentId;
+   final String documentTitre;
+   final String documentCategorie; // NEW: store category for stats
+   final DateTime dateEmprunt;
+   final DateTime dateRetourPrevue;
+   final DateTime? dateRetourEffective;
+   final String statut; // 'en_attente' | 'actif' | 'retourne' | 'en_retard'
 
-  const EmpruntModel({
-    required this.id,
-    required this.userId,
-    required this.userNom,
-    required this.userPrenom,
-    required this.userRole,
-    required this.documentId,
-    required this.documentTitre,
-    required this.dateEmprunt,
-    required this.dateRetourPrevue,
-    required this.statut,
-    this.dateRetourEffective,
-  });
+const EmpruntModel({
+     required this.id,
+     required this.userId,
+     required this.userNom,
+     required this.userPrenom,
+     required this.userRole,
+     required this.documentId,
+     required this.documentTitre,
+     required this.dateEmprunt,
+     required this.dateRetourPrevue,
+     required this.statut,
+     this.documentCategorie = '',
+     this.dateRetourEffective,
+   });
 
-  factory EmpruntModel.fromMap(Map<String, dynamic> map, String id) {
-    return EmpruntModel(
-      id: id,
-      userId: map['userId'] ?? '',
-      userNom: map['userNom'] ?? '',
-      userPrenom: map['userPrenom'] ?? '',
-      userRole: map['userRole'] ?? '',
-      documentId: map['documentId'] ?? '',
-      documentTitre: map['documentTitre'] ?? '',
-      dateEmprunt: DateTime.parse(map['dateEmprunt']),
-      dateRetourPrevue: DateTime.parse(map['dateRetourPrevue']),
-      dateRetourEffective: map['dateRetourEffective'] != null
-          ? DateTime.parse(map['dateRetourEffective'])
-          : null,
-      statut: map['statut'] ?? 'en_attente',
-    );
-  }
+factory EmpruntModel.fromMap(Map<String, dynamic> map, String id) {
+     return EmpruntModel(
+       id: id,
+       userId: map['userId'] ?? '',
+       userNom: map['userNom'] ?? '',
+       userPrenom: map['userPrenom'] ?? '',
+       userRole: map['userRole'] ?? '',
+       documentId: map['documentId'] ?? '',
+       documentTitre: map['documentTitre'] ?? '',
+       documentCategorie: map['documentCategorie'] ?? '',
+       dateEmprunt: DateTime.parse(map['dateEmprunt']),
+       dateRetourPrevue: DateTime.parse(map['dateRetourPrevue']),
+       dateRetourEffective: map['dateRetourEffective'] != null
+           ? DateTime.parse(map['dateRetourEffective'])
+           : null,
+       statut: map['statut'] ?? 'en_attente',
+     );
+   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'userId': userId,
-      'userNom': userNom,
-      'userPrenom': userPrenom,
-      'userRole': userRole,
-      'documentId': documentId,
-      'documentTitre': documentTitre,
-      'dateEmprunt': dateEmprunt.toIso8601String(),
-      'dateRetourPrevue': dateRetourPrevue.toIso8601String(),
-      'dateRetourEffective': dateRetourEffective?.toIso8601String(),
-      'statut': statut,
-    };
-  }
+Map<String, dynamic> toMap() {
+     return {
+       'userId': userId,
+       'userNom': userNom,
+       'userPrenom': userPrenom,
+       'userRole': userRole,
+       'documentId': documentId,
+       'documentTitre': documentTitre,
+       'documentCategorie': documentCategorie,
+       'dateEmprunt': dateEmprunt.toIso8601String(),
+       'dateRetourPrevue': dateRetourPrevue.toIso8601String(),
+       'dateRetourEffective': dateRetourEffective?.toIso8601String(),
+       'statut': statut,
+     };
+   }
 
   // Is this emprunt overdue?
   bool get estEnRetard =>

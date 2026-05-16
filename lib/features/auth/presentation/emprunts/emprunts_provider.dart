@@ -46,13 +46,14 @@ final empruntsParDocumentProvider = FutureProvider<Map<String, int>>((ref) async
 });
 
 final documentsParCategorieProvider = FutureProvider<Map<String, int>>((ref) async {
-  final emprunts = await ref.watch(allEmpruntsProvider.future);
-  final Map<String, int> counts = {};
-  for (final e in emprunts) {
-    counts[e.documentTitre] = (counts[e.documentTitre] ?? 0) + 1;
-  }
-  return counts;
-});
+   final emprunts = await ref.watch(allEmpruntsProvider.future);
+   final Map<String, int> counts = {};
+   for (final e in emprunts) {
+     if (e.documentCategorie.isEmpty) continue;
+     counts[e.documentCategorie] = (counts[e.documentCategorie] ?? 0) + 1;
+   }
+   return counts;
+ });
 
 final retardsParMoisProvider = FutureProvider<Map<String, int>>((ref) async {
   final emprunts = await ref.watch(allEmpruntsProvider.future);

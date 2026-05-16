@@ -37,10 +37,10 @@ class DocumentDetailScreen extends ConsumerWidget {
                 child: document.coverUrl.isNotEmpty
                     ? Image.network(document.coverUrl,
                         height: 200, fit: BoxFit.cover)
-                    : Container(
-                        height: 200,
-                        width: 140,
-                        color: Colors.indigo[100],
+                       : Container(
+                           height: 200,
+                           width: 140,
+                           color: Colors.indigo.shade100,
                         child: const Icon(Icons.book,
                             size: 64, color: Colors.indigo),
                       ),
@@ -131,19 +131,20 @@ class DocumentDetailScreen extends ConsumerWidget {
                 ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
             onPressed: () async {
               Navigator.pop(context);
-              final emprunt = EmpruntModel(
-                id: '',
-                userId: user.uid,
-                userNom: user.nom,
-                userPrenom: user.prenom,
-                userRole: user.role,
-                documentId: document.id,
-                documentTitre: document.titre,
-                dateEmprunt: DateTime.now(),
-                dateRetourPrevue:
-                    DateTime.now().add(Duration(days: jours)),
-                statut: 'en_attente',
-              );
+final emprunt = EmpruntModel(
+                 id: '',
+                 userId: user.uid,
+                 userNom: user.nom,
+                 userPrenom: user.prenom,
+                 userRole: user.role,
+                 documentId: document.id,
+                 documentTitre: document.titre,
+                 documentCategorie: document.categorie,
+                 dateEmprunt: DateTime.now(),
+                 dateRetourPrevue:
+                     DateTime.now().add(Duration(days: jours)),
+                 statut: 'en_attente',
+               );
 
               final success = await ref
                   .read(empruntsNotifierProvider.notifier)

@@ -11,7 +11,7 @@ class StatistiquesScreen extends ConsumerWidget {
     final summaryAsync = ref.watch(summaryProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('Statistiques'),
         backgroundColor: Colors.indigo,
@@ -23,6 +23,7 @@ class StatistiquesScreen extends ConsumerWidget {
           ref.invalidate(empruntsParDocumentProvider);
           ref.invalidate(documentsParCategorieProvider);
           ref.invalidate(retardsParMoisProvider);
+          await Future<void>.delayed(Duration.zero);
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -130,18 +131,18 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       width: 100,
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          border: Border.all(color: color.withOpacity(0.2)),
+        ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -217,7 +218,7 @@ class _TopBooksChart extends ConsumerWidget {
                           Container(
                             height: 24,
                             decoration: BoxDecoration(
-                              color: Colors.indigo.withValues(alpha: 0.1),
+                              color: Colors.indigo.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
@@ -227,7 +228,7 @@ class _TopBooksChart extends ConsumerWidget {
                               height: 24,
                               decoration: BoxDecoration(
                                 color: Colors.indigo
-                                    .withValues(alpha: 0.6 + (0.4 * ratio)),
+                                    .withOpacity(0.6 + (0.4 * ratio)),
                                 borderRadius:
                                     BorderRadius.circular(6),
                               ),
@@ -399,14 +400,14 @@ class _RetardsChart extends ConsumerWidget {
                   return BarChartGroupData(
                     x: i,
                     barRods: [
-                      BarChartRodData(
-                        toY: entries[i].value.toDouble(),
-                        color: Colors.red[300],
-                        width: 20,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(4),
-                        ),
-                      ),
+                       BarChartRodData(
+                         toY: entries[i].value.toDouble(),
+                         color: Colors.red.shade300,
+                         width: 20,
+                         borderRadius: const BorderRadius.vertical(
+                           top: Radius.circular(4),
+                         ),
+                       ),
                     ],
                   );
                 }),
@@ -470,7 +471,7 @@ class _ChartCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_provider.dart';
-import 'login_screen.dart';
 import 'notifications/notification_service.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -78,11 +77,10 @@ class ProfileScreen extends ConsumerWidget {
                 onPressed: () async {
                   await ref.read(authProvider.notifier).logout();
                   if (context.mounted) {
-                    Navigator.pushAndRemoveUntil(
+                    Navigator.pushNamedAndRemoveUntil(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const LoginScreen()),
-                      (_) => false,
+                      '/login',
+                      (route) => false,
                     );
                   }
                 },

@@ -42,37 +42,41 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this._repo) : super(const AuthState());
 
-  Future<void> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      final user = await _repo.login(email: email, password: password);
-      state = state.copyWith(isLoading: false, user: user);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-    }
-  }
+Future<bool> login(String email, String password) async {
+     state = state.copyWith(isLoading: true, error: null);
+     try {
+       final user = await _repo.login(email: email, password: password);
+       state = state.copyWith(isLoading: false, user: user);
+       return true;
+     } catch (e) {
+       state = state.copyWith(isLoading: false, error: e.toString());
+       return false;
+     }
+   }
 
-  Future<void> register({
-    required String email,
-    required String password,
-    required String nom,
-    required String prenom,
-    required String role,
-  }) async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      final user = await _repo.register(
-        email: email,
-        password: password,
-        nom: nom,
-        prenom: prenom,
-        role: role,
-      );
-      state = state.copyWith(isLoading: false, user: user);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-    }
-  }
+Future<bool> register({
+     required String email,
+     required String password,
+     required String nom,
+     required String prenom,
+     required String role,
+   }) async {
+     state = state.copyWith(isLoading: true, error: null);
+     try {
+       final user = await _repo.register(
+         email: email,
+         password: password,
+         nom: nom,
+         prenom: prenom,
+         role: role,
+       );
+       state = state.copyWith(isLoading: false, user: user);
+       return true;
+     } catch (e) {
+       state = state.copyWith(isLoading: false, error: e.toString());
+       return false;
+     }
+   }
 
   Future<void> logout() async {
     await _repo.logout();

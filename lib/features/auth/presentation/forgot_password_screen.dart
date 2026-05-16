@@ -13,36 +13,18 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _setupAuthListener();
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) return 'Email requis';
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) return 'Format email invalide';
-    return null;
-  }
-
-  Future<void> _sendResetEmail() async {
-    final email = _emailController.text.trim();
-
-    final emailError = _validateEmail(email);
-    if (emailError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(emailError), backgroundColor: Colors.red),
-      );
-      return;
-    }
-
-    await ref.read(authProvider.notifier).resetPassword(email);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final state = ref.watch(authProvider);
-
+  void _setupAuthListener() {
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.passwordResetSent && !previous!.passwordResetSent) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -58,12 +40,37 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         );
       }
     });
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Email requis';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) return 'Format email invalide';
+    return null;
+  }
+
+  Future<void> _sendResetEmail() async {
+    final email = _emailController.text.trim();
+
+    final emailError = _validateEmail(email);
+    if (emailError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(emailError), backgroundColor: Theme.of(context).colorScheme.error),
+      );
+      return;
+    }
+
+    await ref.read(authProvider.notifier).resetPassword(email);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(authProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Mot de passe oublié'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
@@ -73,32 +80,46 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.lock_reset, size: 64, color: Colors.indigo),
+              Icon(Icons.lock_reset, size: 64, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Réinitialiser votre mot de passe',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.indigo,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
+               Text(
+                 'Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+                 textAlign: TextAlign.center,
+                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+               ),
               const SizedBox(height: 32),
 
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  prefixIcon: Icon(Icons.email_outlined, color: Theme.of(context).colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
               ),
               const SizedBox(height: 24),
@@ -108,7 +129,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 child: ElevatedButton(
                   onPressed: state.isLoading ? null : _sendResetEmail,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
                   ),
                   child: state.isLoading
                       ? const SizedBox(
@@ -127,7 +149,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Retour à la connexion'),
+                child: Text(
+                  'Retour à la connexion',
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                ),
               ),
             ],
           ),

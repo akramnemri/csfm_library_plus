@@ -5,6 +5,7 @@ import '../../domain/document_model.dart';
 import 'catalogue_provider.dart';
 import '../document_detail_screen.dart';
 import '../add_edit_document_screen.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class CatalogueScreen extends ConsumerWidget {
   const CatalogueScreen({super.key});
@@ -27,12 +28,12 @@ class CatalogueScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Catalogue'),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
-              backgroundColor: Colors.indigo,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -49,12 +50,22 @@ class CatalogueScreen extends ConsumerWidget {
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Rechercher par titre ou auteur...',
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.outline),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               ),
               onChanged: (val) =>
                   ref.read(searchQueryProvider.notifier).state = val,
@@ -74,11 +85,12 @@ class CatalogueScreen extends ConsumerWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
-                    label: Text(cat['label'] as String),
+                    label: Text(cat['label'] as String,
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     selected: isSelected,
-                    selectedColor: Colors.indigo,
+                    selectedColor: Theme.of(context).colorScheme.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     onSelected: (_) => ref
                         .read(selectedCategorieProvider.notifier)
@@ -103,11 +115,17 @@ class CatalogueScreen extends ConsumerWidget {
                         style: TextStyle(color: Colors.grey)),
                   );
                 }
-                return ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) =>
-                      _DocumentCard(doc: docs[index], isAdmin: isAdmin),
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    // ignore: unused_result
+                    ref.refresh(documentsStreamProvider);
+                  },
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) =>
+                        _DocumentCard(doc: docs[index], isAdmin: isAdmin, context: context),
+                  ),
                 );
               },
             ),
@@ -121,8 +139,9 @@ class CatalogueScreen extends ConsumerWidget {
 class _DocumentCard extends ConsumerWidget {
   final DocumentModel doc;
   final bool isAdmin;
+  final BuildContext context;
 
-  const _DocumentCard({required this.doc, required this.isAdmin});
+  const _DocumentCard({required this.doc, required this.isAdmin, required this.context});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -139,9 +158,9 @@ class _DocumentCard extends ConsumerWidget {
                   width: 50,
                   height: 70,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _defaultCover(),
+                  errorBuilder: (_, __, ___) => _defaultCover(this.context),
                 )
-              : _defaultCover(),
+              : _defaultCover(this.context),
         ),
         title: Text(doc.titre,
             style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -191,12 +210,12 @@ class _DocumentCard extends ConsumerWidget {
     );
   }
 
-  Widget _defaultCover() {
-    return Container(
-      width: 50,
-      height: 70,
-      color: Colors.indigo[100],
-      child: const Icon(Icons.book, color: Colors.indigo),
+  Widget _defaultCover(BuildContext context) {
+       return Container(
+         width: 50,
+         height: 70,
+         color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+      child: Icon(Icons.book, color: Theme.of(context).colorScheme.primary),
     );
   }
 
@@ -240,12 +259,17 @@ class _CategoryBadge extends StatelessWidget {
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: Colors.indigo[50],
-        borderRadius: BorderRadius.circular(12),
+       decoration: BoxDecoration(
+         color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+         borderRadius: BorderRadius.circular(12),
+       ),
+      child: Text(
+        labels[categorie] ?? categorie,
+        style: TextStyle(
+          fontSize: 11,
+          color: Theme.of(context).colorScheme.primary,
+        ),
       ),
-      child: Text(labels[categorie] ?? categorie,
-          style: const TextStyle(fontSize: 11, color: Colors.indigo)),
     );
   }
 }
@@ -258,15 +282,19 @@ class _AvailabilityBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: disponible ? Colors.green[50] : Colors.red[50],
+         decoration: BoxDecoration(
+           color: disponible 
+               ? AppTheme.successColor.withOpacity(0.1)
+               : AppTheme.errorColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         disponible ? 'Disponible' : 'Emprunté',
         style: TextStyle(
             fontSize: 11,
-            color: disponible ? Colors.green[700] : Colors.red[700]),
+            color: disponible 
+                ? AppTheme.successColor
+                : AppTheme.errorColor),
       ),
     );
   }

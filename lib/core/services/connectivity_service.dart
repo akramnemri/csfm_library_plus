@@ -23,4 +23,14 @@ class ConnectivityService {
     final results = await _connectivity.checkConnectivity();
     return results.any((result) => result != ConnectivityResult.none);
   }
+
+  /// Subscribes to connectivity changes with a callback.
+  /// Returns a subscription that can be cancelled.
+  StreamSubscription<List<ConnectivityResult>> listen(
+      void Function(bool isConnected) onData) {
+    return _connectivity.onConnectivityChanged.listen((results) {
+      final connected = results.any((r) => r != ConnectivityResult.none);
+      onData(connected);
+    });
+  }
 }
